@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    id = models.AutoField(primary_key=True)
+    id: models.BigAutoField = models.BigAutoField(primary_key=True)
     email = models.EmailField(unique=True)  # 이메일 필드를 유일값으로 설정
     is_active = models.BooleanField(default=True)  # 활성 상태
     is_staff = models.BooleanField(default=False)  # 관리자 여부
