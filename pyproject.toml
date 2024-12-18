@@ -16,6 +16,9 @@ django-stubs = "^5.1.1"
 types-pymysql = "^1.1.0.20241103"
 pytest = "^8.3.4"
 coverage = "^7.6.9"
+djangorestframework = "^3.15.2"
+drf-yasg = "^1.21.8"
+django-rest-swagger = "^2.2.0"
 
 
 [build-system]
