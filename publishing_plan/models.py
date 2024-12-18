@@ -14,7 +14,9 @@ class PublishingPlan(models.Model):
     ]
     id: models.BigAutoField = models.BigAutoField(primary_key=True)
     title: models.CharField = models.CharField(max_length=255)  # 기획 제목
-    description: models.TextField = models.TextField(blank=True, null=True, default="")  # 기획 설명
+    description: models.TextField = models.TextField(
+        blank=True, null=True, default=""
+    )  # 기획 설명
     start_date: models.DateField = models.DateField()
     end_date: models.DateField = models.DateField()
     status: models.CharField = models.CharField(
@@ -23,7 +25,7 @@ class PublishingPlan(models.Model):
     user: models.ForeignKey = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="publishing_plans"
     )
-    contractors = models.ManyToManyField(  # 저자/번역가
+    contractors: models.ManyToManyField = models.ManyToManyField(  # 저자/번역가
         Contractor, related_name="publishing_plans", blank=True
     )
 
