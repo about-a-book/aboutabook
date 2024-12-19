@@ -1,43 +1,71 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from django.http import Http404
+from django.views.generic import ListView
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    get_object_or_404,
+)
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 
 from .models import PublishingPlan
 from .serializers import PublishingPlanSerializer
 
 
-class PublishingPlanViewSet(viewsets.ViewSet):
+class PublishingPlanListCreateView(ListCreateAPIView):
     """
-    A viewset for CRUD operations on PublishingPlan.
+    Handles listing all publishing plans and creating a new one.
     """
 
-    def list(self, request):
-        queryset = PublishingPlan.objects.all()
-        serializer = PublishingPlanSerializer(queryset, many=True)
-        return Response(serializer.data)
+    serializer_class = PublishingPlanSerializer
+    permission_classes = [AllowAny]
 
-    def retrieve(self, request, pk=None):
-        plan = get_object_or_404(PublishingPlan, pk=pk)
-        serializer = PublishingPlanSerializer(plan)
-        return Response(serializer.data)
+    def get_queryset(self):
+        """
+        Optionally filter plans by user if needed.
+        """
+        return PublishingPlan.objects.all()
 
-    def create(self, request):
-        serializer = PublishingPlanSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def perform_create(self, serializer):
+        """
+        Automatically associate the logged-in user with the created publishing plan.
+        """
+        serializer.save(user=self.request.user)
 
-    def partial_update(self, request, pk=None):  # PATCH 요청 처리
-        plan = get_object_or_404(PublishingPlan, pk=pk)
-        serializer = PublishingPlanSerializer(plan, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, pk=None):
-        plan = get_object_or_404(PublishingPlan, pk=pk)
-        plan.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class PublishingPlanListView(ListView):
+    """
+    전체 목록 조회
+    """
+
+    serializer_class = PublishingPlanSerializer
+    permission_classes = [AllowAny]
+    template_name = "todo_list.html"
+
+    def get_queryset(self):
+        """
+        전체 목록을 조회합니다
+        """
+        return PublishingPlan.objects.all()
+
+
+class PublishingPlanDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    Handles retrieving, updating, and deleting a specific publishing plan.
+    """
+
+    serializer_class = PublishingPlanSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        """
+        Ensure only accessible objects are returned.
+        """
+        return PublishingPlan.objects.all()
+
+    def get_object(self):
+        """
+        Retrieves the specific publishing plan.
+        """
+        obj = get_object_or_404(PublishingPlan, pk=self.kwargs.get("pk"))
+        return obj
