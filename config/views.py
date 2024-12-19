@@ -1,5 +1,7 @@
-from django.http import HttpResponse
+from django.shortcuts import render
+from rest_framework.views import APIView
 
 
-def main(request):
-    return HttpResponse("AboutAbook")
+class MainPageView(APIView):
+    def get(self, request):
+        return render(request, "index.html")
