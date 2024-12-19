@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .custom-container {
+        max-width: 600px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    input[type='text'] {
+        height: 2vh;
+    }
+    .comment-list-item {
+        padding: 10px;
+        margin: 5px 0;
+        background: #eaeaea;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+</style>
+<div class="mt-lg-5 custom-container container">
+        <h1>{{ publishing_plan.title }}</h1>
+        {% if request.user == publishing_plan.user or request.user.is_superuser %}
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-secondary" href="{% url 'publishing-plan-update' publishing_plan.id %}">
+                수정
+            </a>
+            &nbsp;
+            <form action="{% url 'publishing-plan-delete' publishing_plan.id %}" method="POST" style="display: inline-block;" onclick="return confirm('정말 삭제하시겠습니까?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">삭제</button>
+            </form>
+        </div>
+    {% endif %}
+    <table class="table">
+        <tr>
+            <th class="bg-light">상세 내용</th>
+            <td>{{ publishing_plan.description | safe }}</td>
+        </tr>
+        <tr>
+            <th class="bg-light">시작일</th>
+            <td>{{ publishing_plan.start_date }}</td>
+        </tr>
+        <tr>
+            <th class="bg-light">종료일</th>
+            <td>{{ publishing_plan.end_date }}</td>
+        </tr>
+        <tr>
+            <th class="bg-light">상태</th>
+            <td>{{ publishing_plan.status }}</td>
+        </tr>
+        <tr>
+            <th class="bg-light">작성자</th>
+            <td>{{ publishing_plan.user }}</td>
+        </tr>
+    </table>
+</div>
+<div class="container custom-container mt-lg-2">
+    <h3>댓글</h3>
+    <hr>
+    <ul class="list-unstyled" id="comment_wrapper">
+        {% if comments %}
+            {% for comment in comments %}
+                <li class="container comment-list-item container-fluid">
+                    <div class="ps-2 d-flex justify-content-between align-items-center">
+                        <p class="mb-0">{{ comment.user }}</p>
+                        {% if request.user == comment.user or request.user.is_staff %}
+                        <div class="text-decoration-none a-group">
+                            <form method="POST" action="{% url 'comment-delete' comment.id %}">
+                                {% csrf_token %}
+                                <div class="btn-group-sm">
+                                    <button class="btn btn-primary" type="button" onclick="modify_view({{ comment.id }})">Edit</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div>
+                        <p class="p-lg-2">{{ comment.message }}</p>
+                        <p class="text-end">{{ comment.created_at }}</p>
+                    </div>
+                    <form id="comment_modify_form_{{ comment.id }}" style="display: none" method="POST" action="{% url 'comment-update' comment.id %}">
+                        {% csrf_token %}
+                        {{ comment_form.as_p }}
+                        <button class="btn btn-primary btn-sm">댓글 수정</button>
+                    </form>
+                </li>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">댓글이 없습니다.</p>
+        {% endif %}
+    </ul>
+    {% if request.user.is_authenticated %}
+        <form method="POST" action="{% url 'comment-create' publishing_plan.id %}" style="display: flex;">
+            {% csrf_token %}
+            <div style="flex: 1; margin-right: 10px;">
+                {{ comment_form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary">댓글 추가</button>
+        </form>
+    {% else %}
+        <p class="text-container">댓글을 작성하려면 <a href="{% url 'login' %}">로그인</a>이 필요합니다.</p>
+    {% endif %}
+</div>
+<script>
+    function modify_view(commentId) {
+        const modifyForm = document.getElementById(`comment_modify_form_${commentId}`);
+        if (modifyForm.style.display === "none") {
+            modifyForm.style.display = "";
+        } else {
+            modifyForm.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

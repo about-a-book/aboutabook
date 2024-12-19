@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Publishing Plan{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>새로운 일정 등록</h1>
+    <form method="POST" class="form-control container mt-3" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="submit-button">일정 등록</button>
+    </form>
+</div>
+{% endblock %}
