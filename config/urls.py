@@ -3,7 +3,11 @@ from django.urls import include, path
 
 from config.schema import schema_view
 
+from .views import MainPageView
+
 urlpatterns = [
+    # default
+    path("", MainPageView.as_view(), name="main"),
     # admin
     path("admin/", admin.site.urls),
     # Swagger
