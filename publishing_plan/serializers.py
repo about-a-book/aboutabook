@@ -4,6 +4,10 @@ from .models import PublishingPlan
 
 
 class PublishingPlanSerializer(serializers.ModelSerializer):
+    contractors = serializers.PrimaryKeyRelatedField(
+        many=True, required=False, queryset=PublishingPlan.objects.all(), default=[]
+    )
+
     class Meta:
         model = PublishingPlan
         fields = [
