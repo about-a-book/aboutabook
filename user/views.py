@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.views import LogoutView
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
