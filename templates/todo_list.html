@@ -31,34 +31,31 @@
     {% if request.user.is_authenticated %}
     <div class="d-flex justify-content-between align-items-center mb-3">
         {% if not request.user.is_staff %}
-            <h1>{{ request.user.username }}'s Todo List</h1>
+            <h1>{{ request.user.username }}'s Publishing Plans</h1>
         {% else %}
-            <h1>All To Do List (By. Admin)</h1>
+            <h1>All Publishing Plans (By Admin)</h1>
         {% endif %}
-        <button class="btn btn-success" onclick="location.href='{% url 'cbv_todo_create' %}'">생성하기</button>
+        <button class="btn btn-success" onclick="location.href='{% url 'publishing-plan-list-create' %}'">Create New Plan</button>
     </div>
     <form method="GET" class="mb-3">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="제목 또는 내용을 입력하세요." name="q" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+            <input type="text" class="form-control" placeholder="Search by title or description" name="q" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
             <button class="btn btn-primary" type="submit">Search</button>
         </div>
     </form>
     <div class="list-group mb-3">
-        {% for todo in page_obj.object_list %}
-            {% if todo.is_completed %}
-                <div class="list-group-item list-group-item-action">
-                    <img class="img-thumbnail" src="{{ todo.thumbnail.url }}" alt="썸네일이미지" style="width: 50px; height: 50px; object-fit: contain;">
-                    <a class="text-decoration-none text-black" href="{% url 'cbv_todo_info' todo.id %}">[{{ todo.author.username }}]{{ todo.title }} (Completed)</a>
-                </div>
-            {% else %}
-                <div class="list-group-item list-group-item-action">
-                    <img class="img-thumbnail" src="{{ todo.thumbnail.url }}" alt="썸네일이미지" style="width: 50px; height: 50px; object-fit: contain;">
-                    <a class="text-decoration-none text-black" href="{% url 'cbv_todo_info' todo.id %}">[{{ todo.author.username }}] {{ todo.title }}</a>
-                </div>
-            {% endif %}
+        {% for plan in publishing_plans %}
+            <div class="list-group-item list-group-item-action">
+                <a class="text-decoration-none text-black" href="{% url 'publishing-plan-detail' plan.id %}">
+                    <strong>[{{ plan.user.username }}]</strong> {{ plan.title }} ({{ plan.status }})
+                </a>
+                <p>{{ plan.description }}</p>
+            </div>
         {% endfor %}
     </div>
     {% include 'pagination.html' %}
+    {% else %}
+        <h3>Please log in to view your publishing plans.</h3>
     {% endif %}
 </div>
 {% endblock %}
