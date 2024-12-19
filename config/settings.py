@@ -57,7 +57,16 @@ INSTALLED_APPS = [
     # Third
     "rest_framework",
     "drf_yasg",
+    "django_summernote",
 ]
+
+# summernote
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
+SUMMERNOTE_CONFIG = {
+    "width": "100%",
+    "height": "400",
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -161,3 +170,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
 }
+
+# Login / Logout
+LOGIN_REDIRECT_URL = "/publishing_plan/"
+LOGOUT_REDIRECT_URL = "/publishing_plan/"
